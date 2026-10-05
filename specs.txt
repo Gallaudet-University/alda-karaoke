@@ -1,0 +1,17 @@
+I would like to write a new cool web-based Karaoke player for the ALDACon 2026 conference - see here for the main web page: https://alda.org/about-aldacon/
+
+Here is an example of expectations for the karaoke: https://alda.org/aldacon-karaoke/
+
+And here is the program: https://alda.org/aldacon-schedule/
+
+So, as we can see, the conference is aimed at a variety of late-deafened (and other deaf and hard of hearing adults), under the motto "whatever works." The karaoke player should meet the following key specifications:
+
+* It should be easily readable from standing several dozens of feet away from a large screen, so the song lyrics need to be pretty large
+* The background should be black and the font should be white or a similarly bright color to maximize readability in a dark environment
+* The words should have a bouncing karakoe dot moving across them in sync with the timing along with the song
+* The song should be played over the speakers in sync with the lyrics and the bouncing dot
+* The dot should pulsate in sync with the beat, so the player has to extract the beat information from the audio file.
+* The dot also should change color across a rainbow pattern in sync with the pitch - lower pitches are red, while the higher pitches gradually spread across the spectrum with violet for the highest pitches.
+* The web-based player should be able to run as pure HTML, CSS and Javascript. We can import third-party code if it is freely available, but there should be no complex software installation or prerequisites
+* The web-based player should be able to run the three songs in the "songs" subfolder, which contains both the audio files and the timed words for each.
+* For testing, use the Chrome installation on this Mac on your own. Once ready to review, point me to a web page that I can open with Chrome on this Mac

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ALDAcon Karaoke</title>
+  <meta name="description" content="Big-screen karaoke player for ALDAcon 2026 with a beat-pulsing, pitch-colored bouncing dot.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23ffd23f%22/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/karaoke.css">
+</head>
+<body>
+  <!-- ============================== Song menu ============================== -->
+  <main id="menu">
+    <header class="menu-head">
+      <p class="eyebrow">ALDAcon 2026</p>
+      <h1 id="menu-title">Karaoke</h1>
+      <p class="motto">Whatever works!</p>
+    </header>
+
+    <div id="file-notice" class="notice" hidden>
+      <p><strong>Opened straight from disk.</strong> Chrome needs your OK to read the songs.
+        Click below and choose the <code>songs</code> folder (once per session).</p>
+      <button type="button" class="big-btn" data-pick-folder>Choose the songs folder…</button>
+    </div>
+
+    <ol id="song-list" role="listbox" aria-label="Songs"></ol>
+
+    <footer class="menu-foot">
+      <button type="button" class="link-btn" data-pick-folder>＋ Add songs from a folder…</button>
+      <span class="keys">↑ ↓ choose · Enter start · F full screen · ? help</span>
+    </footer>
+    <input id="folder-input" type="file" webkitdirectory multiple hidden>
+  </main>
+
+  <!-- ================================ Player ================================ -->
+  <section id="player" hidden aria-label="Karaoke player">
+    <div id="lyrics-viewport">
+      <div id="lyrics" aria-live="off"></div>
+    </div>
+
+    <div id="title-card" class="card">
+      <p class="eyebrow">ALDAcon 2026 Karaoke</p>
+      <h2 id="tc-title"></h2>
+      <p id="tc-artist"></p>
+      <div class="music-meter" id="tc-meter" aria-hidden="true"><div class="music-floor"></div><div class="music-dot"><div class="ring"></div><div class="core"></div></div><p class="music-label"></p></div>
+      <p id="tc-credit" class="credit"></p>
+      <div id="tc-hint">
+        <button type="button" id="tc-start" class="big-btn">▶ Start</button>
+        <p class="keys">or press the Space bar</p>
+      </div>
+    </div>
+
+    <div id="end-card" class="card">
+      <p class="applause" aria-hidden="true">👏 👏 👏</p>
+      <h2>Thank you!</h2>
+      <p id="ec-title"></p>
+      <div class="music-meter" id="ec-meter" aria-hidden="true"><div class="music-floor"></div><div class="music-dot"><div class="ring"></div><div class="core"></div></div><p class="music-label"></p></div>
+      <p id="ec-credit" class="credit"></p>
+      <div class="end-actions">
+        <button type="button" id="ec-next" class="big-btn">Next song ▶</button>
+        <button type="button" id="ec-menu" class="big-btn ghost-btn">Song list</button>
+      </div>
+    </div>
+
+    <div id="loading" class="card show">
+      <h2 id="loading-title"></h2>
+      <p id="loading-label">Loading…</p>
+      <div class="loading-track"><div id="loading-bar"></div></div>
+    </div>
+
+    <div id="progress" title="Click to jump"><div id="progress-fill"></div></div>
+
+    <div id="controls" role="toolbar" aria-label="Player controls">
+      <button type="button" id="btn-menu" title="Song list (Esc)">☰ Songs</button>
+      <span class="sep"></span>
+      <button type="button" id="btn-restart" title="Restart (Home)" aria-label="Restart">⏮</button>
+      <button type="button" id="btn-back" title="Back 5 s (←)" aria-label="Back 5 seconds">−5</button>
+      <button type="button" id="btn-play" class="play" title="Play / pause (Space)" aria-label="Play">▶</button>
+      <button type="button" id="btn-fwd" title="Forward 5 s (→)" aria-label="Forward 5 seconds">+5</button>
+      <span id="time">0:00 / 0:00</span>
+      <span class="sep"></span>
+      <button type="button" id="btn-smaller" title="Smaller text (−)" aria-label="Smaller text">A−</button>
+      <button type="button" id="btn-bigger" title="Bigger text (+)" aria-label="Bigger text">A+</button>
+      <button type="button" id="btn-earlier" title="Lyrics earlier ([)" aria-label="Lyrics earlier">⇠ Sync</button>
+      <button type="button" id="btn-later" title="Lyrics later (])" aria-label="Lyrics later">Sync ⇢</button>
+      <button type="button" id="btn-color" title="Sung-word color (C)">Color</button>
+      <button type="button" id="btn-full" title="Full screen (F)" aria-label="Full screen">⛶</button>
+      <button type="button" id="btn-help" title="Help (?)" aria-label="Help">?</button>
+    </div>
+
+    <div id="toast" role="status" aria-live="polite"></div>
+  </section>
+
+  <!-- ================================= Help ================================= -->
+  <div id="help" role="dialog" aria-label="Keyboard shortcuts">
+    <div class="help-box">
+      <h2>Keyboard</h2>
+      <dl>
+        <dt>Space</dt><dd>Play / pause</dd>
+        <dt>← →</dt><dd>Back / forward 5 s (Shift: 15 s)</dd>
+        <dt>Home</dt><dd>Restart song</dd>
+        <dt>N</dt><dd>Next song</dd>
+        <dt>Esc</dt><dd>Back to song list</dd>
+        <dt>F</dt><dd>Full screen</dd>
+        <dt>+ −</dt><dd>Bigger / smaller lyrics</dd>
+        <dt>[ ]</dt><dd>Lyrics earlier / later (fix speaker delay)</dd>
+        <dt>C</dt><dd>Color of sung words</dd>
+        <dt>T</dt><dd>Dot trail on / off</dd>
+        <dt>P</dt><dd>Dot color from pitch file / live estimate</dd>
+      </dl>
+      <p class="help-note">The dot lands on each word as it is sung, pulses with the beat,
+        and its color follows the singer's pitch: <span class="rainbow-text">red = low … violet = high</span>.
+        Dots before a line count you in.</p>
+      <p class="keys">Click anywhere or press ? to close</p>
+    </div>
+  </div>
+
+  <script src="songs/songs.js"></script>
+  <script src="js/dsp.js"></script>
+  <script src="js/lyrics.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
