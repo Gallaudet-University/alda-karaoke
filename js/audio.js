@@ -24,6 +24,11 @@
 
     context() {
       if (!this.ctx) {
+        // iOS mutes Web Audio while the phone is in silent mode unless the page
+        // says it is a media player (Audio Session API, Safari 16.4+).
+        try {
+          if (root.navigator && navigator.audioSession) navigator.audioSession.type = 'playback';
+        } catch (e) { /* not supported */ }
         const AC = root.AudioContext || root.webkitAudioContext;
         this.ctx = new AC({ latencyHint: 'playback' });
         this.gain = this.ctx.createGain();
