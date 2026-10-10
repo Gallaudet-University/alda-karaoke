@@ -88,6 +88,12 @@ All scripts are **classic scripts, not ES modules**: modules (and Workers, and
   extrapolated with `performance.now()` so it reflects what is audible (output latency
   included). Never steps backwards by small jitter. Manual offset with [ ] keys
   (25 ms steps) for Bluetooth/PA delay — not yet calibrated with real speakers.
+- iOS mutes Web Audio while the phone is in silent mode, even though the dot and lyrics
+  keep running. Fixed by `navigator.audioSession.type = 'playback'` before creating the
+  AudioContext (Safari 16.4+; commit ca51f89, confirmed by the user on iOS 26 in Safari
+  and Chrome). All iOS browsers use WebKit, so Safari and Chrome behave the same.
+  iOS ≤ 15 (iPhone 6s/7/SE1) would still be muted; workaround (silent looping
+  `<audio>` element) deliberately not built.
 - Analysis decodes with `OfflineAudioContext(…, 22050)` so `decodeAudioData`
   resamples to 22.05 kHz; channels are averaged to mono.
 
@@ -165,6 +171,25 @@ The user chose to keep **both** pitch paths for flexibility:
   without a pitch file, or when the user presses **P**.
 
 Do not remove either path or change the default without asking.
+
+## To do
+
+- **Stop browsers serving stale files from the deployment** (decided: on the list, not
+  done yet). The user's deployment is https://tap.gallaudet.edu/cvogler/alda-karaoke/
+  (Apache 2.4.37 on RHEL). It sends `Last-Modified` and `ETag` but no `Cache-Control`
+  or `Expires`, so browsers use heuristic freshness (RFC 9111 §4.2.2, typically 10% of
+  the file's age). After the iOS fix, Safari kept the old `js/audio.js` even after the
+  tab was closed; only a private window loaded the new one.
+  - Planned fix: an `.htaccess` in the deployment folder with
+    `Header set Cache-Control "no-cache"` for `html|js|css|json|csv|txt` (inside
+    `<IfModule mod_headers.c>`), leaving the MP3s cacheable. `no-cache` = revalidate
+    every time; unchanged files cost only a 304 thanks to the ETag.
+  - Works only if the server allows `.htaccess` overrides and has `mod_headers`.
+    Verify after upload: `curl -I …/js/audio.js` must show the `Cache-Control` line.
+  - Version query strings (`audio.js?v=2`) alone are NOT enough: `index.html` gets
+    the same heuristic caching, so a stale page never sees the new version tag.
+    They're only worth adding on top of `no-cache` if long JS/CSS caching is wanted.
+  - Also add a README note on deploying the `.htaccess` file.
 
 ## Most likely to break — test these next
 
